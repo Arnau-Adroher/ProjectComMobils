@@ -20,7 +20,7 @@ def get_sectors(x,y):
     sectors = [sector1,sector2,sector3]
     return sectors
     
-def get_random_points_in_sectors(sectors):      ######DOES NOT WORK, NEED TO BE IMPLMENTED
+def get_random_points_in_sectors(sectors):      ######DOES NOT WORK, NEEDS TO BE IMPLMENTED
     random_points = []
     
     for sector in sectors:
