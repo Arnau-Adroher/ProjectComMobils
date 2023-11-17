@@ -2,6 +2,8 @@ import math
 import random
 import matplotlib.pyplot as plt
 import numpy as np
+from shapely.geometry import Point, Polygon
+
 
 def generate_hexagon(center_x, center_y):
     hexagon = []
@@ -22,19 +24,27 @@ def get_sectors(x,y):
     
 def get_random_points_in_sectors(sectors):      ######DOES NOT WORK, NEEDS TO BE IMPLMENTED
     random_points = []
-    
-    for sector in sectors:
+    # posible sol; hacer que verifique que esta dentro
+    # de los margenes del hexagono, si no esta que genere otro punto aleatorio hasta que este demtro del rango
+    for vertices in sectors:
+        polygon = Polygon(vertices)
+
+        point_fount = False
+
+        while not point_fount:
         
-        vertices = sector
-        x_values, y_values = zip(*vertices)
-        
-        min_x, max_x = min(x_values), max(x_values)
-        min_y, max_y = min(y_values), max(y_values)
-        
-        random_x = random.uniform(min_x, max_x)
-        random_y = random.uniform(min_y, max_y)
-        
-        random_points.append((random_x, random_y))
+            x_values, y_values = zip(*vertices)
+            min_x, max_x = min(x_values), max(x_values)
+            min_y, max_y = min(y_values), max(y_values)
+
+            random_x = random.uniform(min_x, max_x)
+            random_y = random.uniform(min_y, max_y)
+
+            random_point = Point(random_x, random_y)
+
+            if polygon.contains(random_point):
+                random_points.append((random_x, random_y))
+                point_fount = True
     
     return random_points
     
