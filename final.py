@@ -122,9 +122,13 @@ def plot_hexagons(num_hexagons):
     plt.grid(True)
     plt.show()
 
+def main():
+   plot_hexagons(2)
 
-plot_hexagons(2)
+    # center_x = 0
+    # center_y = 0
+    # plot_hexagon_and_sectors(center_x, center_y)
+    
+if __name__ == '__main__':
+    sys.exit(main())
 
-# center_x = 0
-# center_y = 0
-# plot_hexagon_and_sectors(center_x, center_y)
