@@ -29,7 +29,7 @@ def get_sectors(x, y):
     return sectors
 
 
-def get_random_points_in_sectors(sectors):  ######DOES NOT WORK, NEEDS TO BE IMPLMENTED
+def get_random_points_in_sectors(sectors): 
     random_points = []
     # posible sol; hacer que verifique que esta dentro
     # de los margenes del hexagono, si no esta que genere otro punto aleatorio hasta que este demtro del rango
@@ -123,6 +123,9 @@ def plot_hexagons(num_hexagons):
     plt.show()
 
 def main():
+    ###Values###
+    v = 3.8
+    ############
    plot_hexagons(2)
 
     # center_x = 0
