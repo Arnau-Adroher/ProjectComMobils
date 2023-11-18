@@ -129,6 +129,14 @@ def generate_shadow_fading(sigma_dB):
 
     return shadow_fading
 
+def lineal_to_db(number):
+    x = 10 * np.log10(number)
+    return x
+
+def db_to_lineal(number):
+    x = 10 ** (number/10)
+    return x
+    
 def main():
     ###Values###
     v = 3.8
