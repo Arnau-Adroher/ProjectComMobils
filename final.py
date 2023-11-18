@@ -125,6 +125,7 @@ def plot_hexagons(num_hexagons):
 def main():
     ###Values###
     v = 3.8
+    layers = 2
     ############
    plot_hexagons(2)
 
