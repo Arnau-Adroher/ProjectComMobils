@@ -122,10 +122,18 @@ def plot_hexagons(num_hexagons):
     plt.grid(True)
     plt.show()
 
+def generate_shadow_fading(sigma_dB):
+    sigma_linear = sigma_dB * np.log(10)/10
+
+    shadow_fading = np.random.lognormal(mean=0, sigma=sigma_linear, size=1)
+
+    return shadow_fading
+
 def main():
     ###Values###
     v = 3.8
     layers = 2
+    sigma_dB = 8
     ############
    plot_hexagons(2)
 
