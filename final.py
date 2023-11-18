@@ -125,7 +125,7 @@ def plot_hexagons(num_hexagons):
 def generate_shadow_fading(sigma_dB):
     sigma_linear = sigma_dB * np.log(10)/10
 
-    shadow_fading = np.random.lognormal(mean=0, sigma=sigma_linear, size=1)
+    shadow_fading = np.random.lognormal(mean=0, sigma=sigma_linear, size=1) #Standard normal, do we need to use the def on slide 13 on Cellular Network design?
 
     return shadow_fading
 
