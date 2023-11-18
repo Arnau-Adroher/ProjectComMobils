@@ -4,7 +4,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import Point, Polygon
 
+def calc_distance(punto1, punto2):
+    x1, y1 = punto1
+    x2, y2 = punto2
 
+    distancia = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+    return distancia
+    
 def generate_hexagon(center_x, center_y, size=1):
     hexagon = []
     for i in range(6):
