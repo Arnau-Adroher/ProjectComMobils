@@ -1,5 +1,7 @@
 import math
 import random
+import sys
+
 import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import Point, Polygon
@@ -77,40 +79,43 @@ def plot_hexagon_and_sectors(center_x, center_y):
     plt.gca().set_aspect('equal', adjustable='box')
 
 
-def calculate_hexagon_centers(num_hexagons, size=1):
+def calculate_hexagon_centers(n_layers, size=1):
     # Start with the center hexagon
     centers = [(0, 0)]
-    if num_hexagons == 1:
+    if n_layers == 0:
         return centers
 
-    angle_degrees = 30
+    angle_degrees = 30  # Each hexagon has 60 degrees between its vertices
     angle_radians = math.radians(angle_degrees)
 
-    cosine_of_angle = math.cos(angle_radians)
-
-    dist = 2 * size * cosine_of_angle
-
     # Calculate centers of surrounding hexagons
-    layer = 1
-    while len(centers) < num_hexagons:
-        for i in range(6):
-            angle = angle_radians * i
-            for j in range(layer):
-                x = centers[-1][0] + math.cos(angle)
-                y = centers[-1][1] + math.sin(angle)
-            if len(centers) < num_hexagons:
-                centers.append((x, y))
-            else:
-                break
-        if len(centers) >= num_hexagons:
-            break
-    layer += 1
+    for i in range(1, n_layers + 1):
+        # Distance from the center increases with each layer
+        dist = 2 * i * size * math.cos(angle_radians)
 
+        for j in range(0, 6 * i):
+            if i == 2 and j % 2 != 0:
+                dist = 3
+            else:
+                dist = 2 * i * size * math.cos(angle_radians)
+
+            offset = (j * (360 / (i * 6)) + 30)
+
+            x = centers[0][0] + math.cos(math.radians(offset)) * dist
+            y = centers[0][1] + math.sin(math.radians(offset)) * dist
+            print(offset)
+
+            # Add center if unique and still need more hexagons
+            if (x, y) not in centers:
+                centers.append((x, y))
+
+    print(centers)
     return centers
 
 
-def plot_hexagons(num_hexagons):
-    hexagon_centers = calculate_hexagon_centers(num_hexagons)
+
+def plot_hexagons(n_layers):
+    hexagon_centers = calculate_hexagon_centers(n_layers)
 
     for center in hexagon_centers:
         plot_hexagon_and_sectors(center_x=center[0], center_y=center[1])
@@ -143,7 +148,7 @@ def main():
     layers = 2
     sigma_dB = 8
     ############
-   plot_hexagons(2)
+    plot_hexagons(2)
 
     # center_x = 0
     # center_y = 0
