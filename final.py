@@ -103,13 +103,13 @@ def calculate_hexagon_centers(n_layers, size=1):
 
             x = centers[0][0] + math.cos(math.radians(offset)) * dist
             y = centers[0][1] + math.sin(math.radians(offset)) * dist
-            print(offset)
+            #print(offset)
 
             # Add center if unique and still need more hexagons
             if (x, y) not in centers:
                 centers.append((x, y))
 
-    print(centers)
+    #print(centers)
     return centers
 
 
@@ -128,9 +128,8 @@ def plot_hexagons(n_layers):
     plt.show()
 
 def generate_shadow_fading(sigma_dB):
-    sigma_linear = sigma_dB * np.log(10)/10
 
-    shadow_fading = np.random.lognormal(mean=0, sigma=sigma_linear, size=1) #Standard normal, do we need to use the def on slide 13 on Cellular Network design?
+    shadow_fading = np.random.normal(loc=0, scale=sigma_dB) #Standard normal, do we need to use the def on slide 13 on Cellular Network design?
 
     return shadow_fading
 
@@ -141,22 +140,52 @@ def lineal_to_db(number):
 def db_to_lineal(number):
     x = 10 ** (number/10)
     return x
-def ex_1():
-    SIR = 0
-    centers = calculate_hexagon_centers(2)
     
-    for center in centers:
-        sectors = get_sectors(center[0],center[1])
-        random_points = get_random_points_in_sectors(sectors) 
+def ex_1(v, sigma_dB):
+    centers = calculate_hexagon_centers(2)
+    ref_cent = 0,0
+    list_of_SIR = []
+    for i in range (1,1001):
+        SIR = 0
+        d_all = 0
+        for center in centers:
+            ####s'ha de comprobar si angle del punt respecte 0,0 és més petit = 120º
+            c_x = center[0]
+            c_y = center[1]
+            sectors = get_sectors(c_x,c_y)           
+            random_points = get_random_points_in_sectors(sectors)   
+            if c_y == 0 and c_x == 0:   
+                d = db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[0],ref_cent)**(v))
+                d_all += db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[1],ref_cent)**(v)) + db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[2],ref_cent)**(v))           
+            else:
+                d_all += db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[0],ref_cent)**(v)) + db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[1],ref_cent)**(v)) + db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[2],ref_cent)**(v))
+        SIR = lineal_to_db(d/d_all)
+        list_of_SIR.append(SIR) 
         
-    print(random_points)   
+    plt.hist(list_of_SIR, bins=30, edgecolor='black')  # Adjust the number of bins as needed
+    plt.title('Histogram of Random Data')
+    plt.xlabel('SIR(dB)')
+    plt.ylabel('Frequency')
+    plt.grid(True)
+    plt.show()
+    
+    plt.hist(list_of_SIR, bins=30, cumulative=True, density=True, edgecolor='black')
+    plt.title('Cumulative Distribution Function (CDF) of Random Data')
+    plt.xlabel('Values')
+    plt.ylabel('Cumulative Probability')
+    plt.grid(True)
+    plt.show()
+ 
+    
 def main():
     ###Values###
     v = 3.8
     layers = 2
     sigma_dB = 8
     ############
-    plot_hexagons(2)
+    #plot_hexagons(2)
+    ex_1(v,sigma_dB)
+
 
     # center_x = 0
     # center_y = 0
@@ -164,4 +193,3 @@ def main():
     
 if __name__ == '__main__':
     sys.exit(main())
-
