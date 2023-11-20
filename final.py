@@ -141,7 +141,15 @@ def lineal_to_db(number):
 def db_to_lineal(number):
     x = 10 ** (number/10)
     return x
+def ex_1():
+    SIR = 0
+    centers = calculate_hexagon_centers(2)
     
+    for center in centers:
+        sectors = get_sectors(center[0],center[1])
+        random_points = get_random_points_in_sectors(sectors) 
+        
+    print(random_points)   
 def main():
     ###Values###
     v = 3.8
