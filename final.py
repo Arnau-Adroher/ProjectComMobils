@@ -153,11 +153,14 @@ def ex_1(v, sigma_dB):
     centers = calculate_hexagon_centers(2)
     ref_cent = 0,0
     list_of_SIR = []
+    list_of_SIR_3 = []
 
     sh_ref = db_to_lineal(generate_shadow_fading(sigma_dB))
     for i in range (1,1001):
         SIR = 0
+        SIR_3 = 0
         d_all = 0
+        d_all_3 = 0
         for center in centers:
             ####s'ha de comprobar si angle del punt respecte 0,0 és més petit = 120º
             c_x = center[0]
@@ -170,27 +173,39 @@ def ex_1(v, sigma_dB):
             else:
                 for i in range(0,3):
                     angle = calculate_angle(ref_cent,random_points[i])
-                    if angle <= 120:
-                        d_all += sh_ref/(calc_distance(random_points[i],ref_cent)**(v))
-        
+                    #print(angle)
+                    if angle <= 120 and angle >= 0:
+                        val = sh_ref/(calc_distance(random_points[i],ref_cent)**(v))
+                        d_all += val
+                        if i == 0:
+                            d_all_3 += val
         
         SIR = lineal_to_db(d/d_all)
-        list_of_SIR.append(SIR) 
+        SIR_3 = lineal_to_db(d/d_all_3)
+        list_of_SIR.append(SIR)
+        list_of_SIR_3.append(SIR_3)         
         
-    plt.hist(list_of_SIR, bins=30, edgecolor='black')  # Adjust the number of bins as needed
-    plt.title('Histogram of Random Data')
-    plt.xlabel('SIR(dB)')
-    plt.ylabel('Frequency')
-    plt.grid(True)
-    plt.show()
-    
-    plt.hist(list_of_SIR, bins=30, cumulative=True, density=True, edgecolor='black')
+    sorted_SIR = np.sort(list_of_SIR)
+    sorted_SIR_3 = np.sort(list_of_SIR_3)
+
+    # Calculate the cumulative distribution function for both arrays
+    cumulative_prob = np.linspace(0, 1, len(sorted_SIR))
+    cumulative_prob_3 = np.linspace(0, 1, len(sorted_SIR_3))
+
+    # Plot the CDF curves for both arrays
+    plt.plot(sorted_SIR, cumulative_prob, label='CDF reuse factor 1', color='blue')
+    plt.plot(sorted_SIR_3, cumulative_prob_3, label='CDF reuse factor 3', color='red')
+
+    # Add labels and title
     plt.title('Cumulative Distribution Function (CDF) of Random Data')
-    plt.xlabel('Values')
+    plt.xlabel('SIR(dB)')
     plt.ylabel('Cumulative Probability')
+
+    plt.xlim(-5, 35)
+
     plt.grid(True)
+    plt.legend()  # Show legend if multiple curves are plotted
     plt.show()
- 
     
 def main():
     ###Values###
