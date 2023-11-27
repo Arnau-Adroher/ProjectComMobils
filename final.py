@@ -123,6 +123,7 @@ def calculate_hexagon_centers(n_layers, size=1):
 
 
 def plot_hexagons(n_layers):
+    plt.figure(1)
     hexagon_centers = calculate_hexagon_centers(n_layers)
 
     for center in hexagon_centers:
@@ -133,7 +134,7 @@ def plot_hexagons(n_layers):
     # plt.legend()
 
     plt.grid(True)
-    plt.show()
+    
 
 def generate_shadow_fading(sigma_dB):
 
@@ -193,6 +194,7 @@ def ex_1(v, sigma_dB):
     cumulative_prob_3 = np.linspace(0, 1, len(sorted_SIR_3))
 
     # Plot the CDF curves for both arrays
+    plt.figure(2)
     plt.plot(sorted_SIR, cumulative_prob, label='CDF reuse factor 1', color='blue')
     plt.plot(sorted_SIR_3, cumulative_prob_3, label='CDF reuse factor 3', color='red')
 
