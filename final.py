@@ -1,7 +1,6 @@
 import math
 import random
 import sys
-
 import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import Point, Polygon
@@ -12,6 +11,15 @@ def calc_distance(punto1, punto2):
 
     distancia = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
     return distancia
+    
+def calculate_angle(punto1, punto2):
+    x1, y1 = punto1
+    x2, y2 = punto2
+    delta_x = x2 - x1
+    delta_y = y2 - y1
+    angle_radians = math.atan2(delta_y, delta_x)
+    angle_degrees = math.degrees(angle_radians)
+    return angle_degrees    
     
 def generate_hexagon(center_x, center_y, size=1):
     hexagon = []
@@ -160,8 +168,12 @@ def ex_1(v, sigma_dB):
 
                 d = sh_ref/(calc_distance(random_points[0],ref_cent)**(v))
             else:
-                #verificar que els punt esten dins del angle
-                d_all += sh_ref/(calc_distance(random_points[0],ref_cent)**(v)) + sh_ref/(calc_distance(random_points[1],ref_cent)**(v)) + sh_ref/(calc_distance(random_points[2],ref_cent)**(v))
+                for i in range(0,3):
+                    angle = calculate_angle(ref_cent,random_points[i])
+                    if angle <= 120:
+                        d_all += sh_ref/(calc_distance(random_points[i],ref_cent)**(v))
+        
+        
         SIR = lineal_to_db(d/d_all)
         list_of_SIR.append(SIR) 
         
