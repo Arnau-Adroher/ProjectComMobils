@@ -145,6 +145,8 @@ def ex_1(v, sigma_dB):
     centers = calculate_hexagon_centers(2)
     ref_cent = 0,0
     list_of_SIR = []
+
+    sh_ref = db_to_lineal(generate_shadow_fading(sigma_dB))
     for i in range (1,1001):
         SIR = 0
         d_all = 0
@@ -154,11 +156,12 @@ def ex_1(v, sigma_dB):
             c_y = center[1]
             sectors = get_sectors(c_x,c_y)           
             random_points = get_random_points_in_sectors(sectors)   
-            if c_y == 0 and c_x == 0:   
-                d = db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[0],ref_cent)**(v))
-                d_all += db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[1],ref_cent)**(v)) + db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[2],ref_cent)**(v))           
+            if c_y == 0 and c_x == 0:
+
+                d = sh_ref/(calc_distance(random_points[0],ref_cent)**(v))
             else:
-                d_all += db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[0],ref_cent)**(v)) + db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[1],ref_cent)**(v)) + db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[2],ref_cent)**(v))
+                #verificar que els punt esten dins del angle
+                d_all += sh_ref/(calc_distance(random_points[0],ref_cent)**(v)) + sh_ref/(calc_distance(random_points[1],ref_cent)**(v)) + sh_ref/(calc_distance(random_points[2],ref_cent)**(v))
         SIR = lineal_to_db(d/d_all)
         list_of_SIR.append(SIR) 
         
@@ -183,7 +186,7 @@ def main():
     layers = 2
     sigma_dB = 8
     ############
-    #plot_hexagons(2)
+    plot_hexagons(2)
     ex_1(v,sigma_dB)
 
 
