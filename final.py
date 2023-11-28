@@ -191,7 +191,7 @@ def ex_1(v, sigma_dB):
                     angle = calculate_angle(ref_cent,random_points[i])
                     #print(angle)
                     if angle <= 120 and angle >= 0:
-                        P_k = (calc_distance(random_points[i],ref_cent)**(v))**n
+                        P_k = (calc_distance(random_points[i],center)**(v))**n
                         val = db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[i],ref_cent)**(v))
                         d_all += val
                         a_all += P_k * val
