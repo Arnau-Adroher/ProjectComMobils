@@ -171,7 +171,7 @@ def ex_1(v, sigma_dB):
         d_all_9 = 0
         center_id = 0
         P=0
-        n=0.25
+        n=0.5
         a = 0
         a_all =0
         a_all_3 = 0
@@ -183,24 +183,27 @@ def ex_1(v, sigma_dB):
             sectors = get_sectors(c_x,c_y)           
             random_points = get_random_points_in_sectors(sectors)   
             if c_y == 0 and c_x == 0:
-                P=(calc_distance(random_points[0],ref_cent)**(v))**n
+                P=(calc_distance(random_points[0],ref_cent))**(n)
                 d = db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[0],ref_cent)**(v))
-                a = P*d
+                a = db_to_lineal(generate_shadow_fading(sigma_dB))*(calc_distance(random_points[0],ref_cent)**(n-v))
+
             else:
                 for i in range(0,3):
                     angle = calculate_angle(ref_cent,random_points[i])
                     #print(angle)
                     if angle <= 120 and angle >= 0:
-                        P_k = (calc_distance(random_points[i],center)**(v))**n
+                        d_k = (calc_distance(random_points[i],center))**(n)
                         val = db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[i],ref_cent)**(v))
+                        val2 = db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[i],ref_cent)**(v))*d_k
+
                         d_all += val
-                        a_all += P_k * val
+                        a_all += val2
                         if i == 0:
                             d_all_3 += val
-                            a_all_3 += P_k * val
+                            a_all_3 += val2
                             if center_id == 8 or center_id == 18:
                                 d_all_9 += val
-                                a_all_9 += P_k * val
+                                a_all_9 += val2
 
                                 #print(center)
             center_id += 1
@@ -244,21 +247,9 @@ def ex_1(v, sigma_dB):
     plt.plot(sorted_SIR_3, cumulative_prob_3, label='CDF reuse factor 3', color='red')
     plt.plot(sorted_SIR_9, cumulative_prob_9, label='CDF reuse factor 9', color='green')
 
-    # Add labels and title
-    plt.title('Cumulative Distribution Function (CDF) of Random Data')
-    plt.xlabel('SIR(dB)')
-    plt.ylabel('Cumulative Probability')
-
-    plt.xlim(-15, 40)
-
-    plt.grid(True)
-    plt.legend()  # Show legend if multiple curves are plotted
-
-    # Plot the CDF curves for both arrays
-    plt.figure(3)
-    plt.plot(sorted_SIR_frac, cumulative_prob_frac, label='CDF reuse factor 1', color='blue')
-    plt.plot(sorted_SIR_3_frac, cumulative_prob_3_frac, label='CDF reuse factor 3', color='red')
-    plt.plot(sorted_SIR_9_frac, cumulative_prob_9_frac, label='CDF reuse factor 9', color='green')
+    plt.plot(sorted_SIR_frac, cumulative_prob_frac, label='CDF reuse factor 1', color='pink')
+    plt.plot(sorted_SIR_3_frac, cumulative_prob_3_frac, label='CDF reuse factor 3', color='yellow')
+    plt.plot(sorted_SIR_9_frac, cumulative_prob_9_frac, label='CDF reuse factor 9', color='orange')
 
     # Add labels and title
     plt.title('Cumulative Distribution Function (CDF) of Random Data')
