@@ -171,7 +171,7 @@ def ex_1(v, sigma_dB):
         d_all_9 = 0
         center_id = 0
         P=0
-        n=0.5
+        n=1
         a = 0
         a_all =0
         a_all_3 = 0
@@ -183,19 +183,22 @@ def ex_1(v, sigma_dB):
             sectors = get_sectors(c_x,c_y)           
             random_points = get_random_points_in_sectors(sectors)   
             if c_y == 0 and c_x == 0:
-                P=(calc_distance(random_points[0],ref_cent))**(n*v)
-                d = db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[0],ref_cent)**(v))
+                x= db_to_lineal(generate_shadow_fading(sigma_dB))
+                P=(calc_distance(random_points[0],ref_cent))**(n*v)/(x**(n))
+                d = x/(calc_distance(random_points[0],ref_cent)**(v))
                 a = d*P
             else:
                 for i in range(0,3):
                     angle = calculate_angle(ref_cent,random_points[i])
                     #print(angle)
                     if angle <= 120 and angle >= 0:
-                        P_k = (calc_distance(random_points[i],center))**(v*n)
+                        x1= db_to_lineal(generate_shadow_fading(sigma_dB))
+                        x2= db_to_lineal(generate_shadow_fading(sigma_dB))
+
+                        P_k = (calc_distance(random_points[i],center))**(v*n)/(x1**(n))
                         if (calc_distance(random_points[i],center))>1:
                             print("error")
-                            
-                        val = db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[i],ref_cent)**(v))
+                        val =x2/(calc_distance(random_points[i],ref_cent)**(v))
                         d_all += val
                         a_all += val*P_k
                         if i == 0:
