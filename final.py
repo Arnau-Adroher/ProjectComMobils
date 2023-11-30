@@ -149,8 +149,21 @@ def lineal_to_db(number):
 def db_to_lineal(number):
     x = 10 ** (number/10)
     return x
+
+def calculate_percentage(sorted_SIR, threshold=-5):
+    val = 0
+    for i in sorted_SIR:
+        val += 1
+        if i >= threshold:
+            percentage = (1 - (val / len(sorted_SIR))) * 100
+            #print(f'SIR >= {threshold}: {percentage:.2f}%')
+            break
+
     
-def ex_1(v, sigma_dB, n):
+
+
+    
+def ex_1_2(v, sigma_dB, n):
     centers = calculate_hexagon_centers(2)
     #print(centers)
     ref_cent = 0,0
@@ -162,7 +175,7 @@ def ex_1(v, sigma_dB, n):
     list_of_SIR_9_frac = []
 
 
-    for i in range (1,1001):
+    for i in range (1,50001):
         SIR = 0
         SIR_3 = 0
         SIR_9 = 0
@@ -234,6 +247,17 @@ def ex_1(v, sigma_dB, n):
     sorted_SIR_3_frac = np.sort(list_of_SIR_3_frac)
     sorted_SIR_9_frac = np.sort(list_of_SIR_9_frac)
     
+    # Ex1
+   # print('sorted_SIR')
+    calculate_percentage(sorted_SIR)
+
+   # print('sorted_SIR_3')
+    calculate_percentage(sorted_SIR_3)
+
+   # print('sorted_SIR_9')
+    calculate_percentage(sorted_SIR_9)
+    
+    '''
     val = 0
     for i in sorted_SIR:
         val += 1
@@ -248,6 +272,16 @@ def ex_1(v, sigma_dB, n):
             #print('SIR >= -5 frac 3: ',(1-(val/1000))*100,'%')
             break
     val = 0
+
+    for i in sorted_SIR_9:
+        val += 1
+        if i >= -5:
+            #print('SIR >= -5 frac 9: ',(1-(val/1000))*100,'%')
+            break
+            
+    val = 0
+    '''
+    #EX2
     x = 0
     for i in sorted_SIR_3_frac:
         val += 1
@@ -255,15 +289,7 @@ def ex_1(v, sigma_dB, n):
             x = (1-(val/1000))*100
             #print('SIR >= -5 frac 3: ',(1-(val/1000))*100,'%')
             break
-    val = 0
-    
-    
-    for i in sorted_SIR_9:
-        val += 1
-        if i >= -5:
-            #print('SIR >= -5 frac 9: ',(1-(val/1000))*100,'%')
-            break
-            
+  
     return x
     '''        
     # Calculate the cumulative distribution function for both arrays
@@ -303,7 +329,7 @@ def main():
     layers = 2
     sigma_dB = 8
     ############
-    plot_hexagons(2)
+    #plot_hexagons(2)
     #ex_1(v,sigma_dB)
     
     max_n = 0
@@ -312,7 +338,7 @@ def main():
     for i in range (1,21):
         n = i*(1/20)
         print(n)
-        x = ex_1(v,sigma_dB,n)
+        x = ex_1_2(v,sigma_dB,n)
         array___r.append(x)
         if x > max_x:
             max_x = x
@@ -320,10 +346,22 @@ def main():
     
     print(max_n, max_x)
     print(array___r)
-    #Like this it is not necessary to put in each act
-    
-    #plt.show()
 
+    x_values, y_values = zip(*array___r)
+
+    # Plotting the points
+    plt.scatter(x_values, y_values, label='Points', color='blue', marker='o')
+
+    # Adding labels and title
+    plt.xlabel('X-axis Label')
+    plt.ylabel('Y-axis Label')
+    plt.title('Scatter Plot of Points')
+
+    # Adding a legend
+    plt.legend()
+
+    # Display the plot
+    plt.show()
 
     # center_x = 0
     # center_y = 0
