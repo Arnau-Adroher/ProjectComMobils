@@ -171,7 +171,7 @@ def ex_1(v, sigma_dB):
         d_all_9 = 0
         center_id = 0
         P=0
-        n=1
+        n=0.5
         a = 0
         a_all =0
         a_all_3 = 0
@@ -192,16 +192,18 @@ def ex_1(v, sigma_dB):
                     #print(angle)
                     if angle <= 120 and angle >= 0:
                         P_k = (calc_distance(random_points[i],center))**(v*n)
+                        if (calc_distance(random_points[i],center))>1:
+                            print("error")
+                            
                         val = db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[i],ref_cent)**(v))
-                        val2 = db_to_lineal(generate_shadow_fading(sigma_dB))/(calc_distance(random_points[i],ref_cent)**(v))
                         d_all += val
-                        a_all += val2*P_k
+                        a_all += val*P_k
                         if i == 0:
                             d_all_3 += val
-                            a_all_3 += P_k * val2
+                            a_all_3 += P_k * val
                             if center_id == 8 or center_id == 18:
                                 d_all_9 += val
-                                a_all_9 += P_k * val2
+                                a_all_9 += P_k * val
 
                                 #print(center)
             center_id += 1
@@ -254,7 +256,7 @@ def ex_1(v, sigma_dB):
     plt.xlabel('SIR(dB)')
     plt.ylabel('Cumulative Probability')
 
-    plt.xlim(-15, 40)
+    plt.xlim(-20, 40)
 
     plt.grid(True)
     plt.legend()  # Show legend if multiple curves are plotted
