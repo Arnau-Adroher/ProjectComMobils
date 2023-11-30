@@ -150,7 +150,7 @@ def db_to_lineal(number):
     x = 10 ** (number/10)
     return x
     
-def ex_1(v, sigma_dB):
+def ex_1(v, sigma_dB, n):
     centers = calculate_hexagon_centers(2)
     #print(centers)
     ref_cent = 0,0
@@ -171,7 +171,6 @@ def ex_1(v, sigma_dB):
         d_all_9 = 0
         center_id = 0
         P=0
-        n=1
         a = 0
         a_all =0
         a_all_3 = 0
@@ -234,7 +233,39 @@ def ex_1(v, sigma_dB):
     sorted_SIR_frac = np.sort(list_of_SIR_frac)
     sorted_SIR_3_frac = np.sort(list_of_SIR_3_frac)
     sorted_SIR_9_frac = np.sort(list_of_SIR_9_frac)
-
+    
+    val = 0
+    for i in sorted_SIR:
+        val += 1
+        if i >= -5:
+            #print('SIR >= -5 frac 1: ',(1-(val/1000))*100,'%')
+            break
+    val = 0
+    
+    for i in sorted_SIR_3:
+        val += 1
+        if i >= -5:
+            #print('SIR >= -5 frac 3: ',(1-(val/1000))*100,'%')
+            break
+    val = 0
+    x = 0
+    for i in sorted_SIR_3_frac:
+        val += 1
+        if i >= -5:
+            x = (1-(val/1000))*100
+            #print('SIR >= -5 frac 3: ',(1-(val/1000))*100,'%')
+            break
+    val = 0
+    
+    
+    for i in sorted_SIR_9:
+        val += 1
+        if i >= -5:
+            #print('SIR >= -5 frac 9: ',(1-(val/1000))*100,'%')
+            break
+            
+    return x
+    '''        
     # Calculate the cumulative distribution function for both arrays
     cumulative_prob = np.linspace(0, 1, len(sorted_SIR))
     cumulative_prob_3 = np.linspace(0, 1, len(sorted_SIR_3))
@@ -250,58 +281,12 @@ def ex_1(v, sigma_dB):
     plt.plot(sorted_SIR_3, cumulative_prob_3, label='CDF reuse factor 3', color='red')
     plt.plot(sorted_SIR_9, cumulative_prob_9, label='CDF reuse factor 9', color='green')
 
-    # Encuentra el índice donde cumulative_prob es más cercano a 0.03
-    index1 = (abs(cumulative_prob - 0.03)).argmin()
-    index2 = (abs(cumulative_prob_3 - 0.03)).argmin()
-    index3 = (abs(cumulative_prob_9 - 0.03)).argmin()
-
-     # Añadir un punto en la posición y = 0.03
-    plt.scatter(sorted_SIR[index1], 0.03, marker='o', color='black', label='Point at y=0.03')
-    plt.scatter(sorted_SIR_3[index2], 0.03, marker='o', color='black', label='Point at y=0.03')
-    plt.scatter(sorted_SIR_9[index3], 0.03, marker='o', color='black', label='Point at y=0.03')
-
-     # Add labels and title
-    plt.title('Cumulative Distribution Function (CDF) of Random Data Ex1')
-    plt.xlabel('SIR(dB)')
-    plt.ylabel('Cumulative Probability')
-
-    plt.xlim(-20, 40)
-
-    plt.grid(True)
-    plt.legend()  # Show legend if multiple curves are plotted
-    
-    plt.figure(3)
-    plt.plot(sorted_SIR, cumulative_prob, label='CDF reuse factor 1', color='blue')
-    plt.plot(sorted_SIR_3, cumulative_prob_3, label='CDF reuse factor 3', color='red')
-    plt.plot(sorted_SIR_9, cumulative_prob_9, label='CDF reuse factor 9', color='green')
-
     plt.plot(sorted_SIR_frac, cumulative_prob_frac, label='CDF reuse factor 1', color='pink')
     plt.plot(sorted_SIR_3_frac, cumulative_prob_3_frac, label='CDF reuse factor 3', color='yellow')
     plt.plot(sorted_SIR_9_frac, cumulative_prob_9_frac, label='CDF reuse factor 9', color='orange')
 
-    # Encuentra el índice donde cumulative_prob es más cercano a 0.03
-    index4 = (abs(cumulative_prob_frac - 0.03)).argmin()
-    index5 = (abs(cumulative_prob_3_frac - 0.03)).argmin()
-    index6 = (abs(cumulative_prob_9_frac - 0.03)).argmin()
-
-    # Añadir un punto en la posición y = 0.03
-    plt.scatter(sorted_SIR[index1], 0.03, marker='o', color='black', label='Point at y=0.03')
-    plt.scatter(sorted_SIR_3[index2], 0.03, marker='o', color='black', label='Point at y=0.03')
-    plt.scatter(sorted_SIR_9[index3], 0.03, marker='o', color='black', label='Point at y=0.03')
-
-    plt.scatter(sorted_SIR_frac[index4], 0.03, marker='o', color='black', label='Point at y=0.03')
-    plt.scatter(sorted_SIR_3_frac[index5], 0.03, marker='o', color='black', label='Point at y=0.03')
-    plt.scatter(sorted_SIR_9_frac[index6], 0.03, marker='o', color='black', label='Point at y=0.03')
-
-    print(sorted_SIR[index1])
-    print(sorted_SIR_3[index2])
-    print(sorted_SIR_9[index3])
-    print(sorted_SIR_frac[index4])
-    print(sorted_SIR_3_frac[index5])
-    print(sorted_SIR_9_frac[index6])
-
     # Add labels and title
-    plt.title('Cumulative Distribution Function (CDF) of Random Data Ex2')
+    plt.title('Cumulative Distribution Function (CDF) of Random Data')
     plt.xlabel('SIR(dB)')
     plt.ylabel('Cumulative Probability')
 
@@ -309,7 +294,8 @@ def ex_1(v, sigma_dB):
 
     plt.grid(True)
     plt.legend()  # Show legend if multiple curves are plotted
-
+   
+    '''
     
 def main():
     ###Values###
@@ -318,13 +304,25 @@ def main():
     sigma_dB = 8
     ############
     plot_hexagons(2)
-    ex_1(v,sigma_dB)
-
-
-
+    #ex_1(v,sigma_dB)
+    
+    max_n = 0
+    max_x = 0
+    array___r = []
+    for i in range (1,21):
+        n = i*(1/20)
+        print(n)
+        x = ex_1(v,sigma_dB,n)
+        array___r.append(x)
+        if x > max_x:
+            max_x = x
+            max_n = n
+    
+    print(max_n, max_x)
+    print(array___r)
     #Like this it is not necessary to put in each act
-    plt.show()
-
+    
+    #plt.show()
 
 
     # center_x = 0
