@@ -391,7 +391,7 @@ def ex3(num_samples,max_n_v3_8):
                 max_p4 = p4
                 max_n = n_val
 
-        print('V value: ', j, ', Max eta: ', max_n, ', P(SIR>=-5dB): ', max_p4)
+        print('V value: ', v, ', Max eta: ', max_n, ', P(SIR>=-5dB): ', max_p4)
         _, _, _, _, sorted_SIR_3, _, _, sorted_SIR_frac, sorted_SIR_3_frac, _ = simulator(v, sigma_dB, max_n, num_samples)
         save_val.append((sorted_SIR_3, sorted_SIR_3_frac))
     
