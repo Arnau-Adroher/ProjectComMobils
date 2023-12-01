@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import Point, Polygon
 import time
-import concurrent.futures
+import threading
 
 def calc_distance(punto1, punto2):
     x1, y1 = punto1
@@ -264,6 +264,10 @@ def simulator(v, sigma_dB, n,num_samples):
     p4 = calculate_percentage(sorted_SIR_3_frac)
     
     return p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac
+    
+def simulate_single(v, sigma_dB, n, num_samples, result_list):
+    p1, p2, p3, p4, sorted_SIR, _, _, _, _, _ = simulator(v, sigma_dB, n, num_samples)
+    result_list.append((n, p4))
  
 
 def ex1(num_samples):
@@ -357,23 +361,33 @@ def ex3(num_samples,max_n_v3_8):
     
     p1,p2,p3,p4, sorted_SIR, sorted_SIR_3_v3_8, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac_v3_8, sorted_SIR_9_frac = simulator(v, sigma_dB, max_n_v3_8,num_samples)
     
+
     for j in v_values:
         max_p4 = 0
         max_n = 0
         array___r = []
-        for i in range (1,21):
-            n = round(i*(1/20),2)
-            #print(n)
-            p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac = simulator(v,sigma_dB,n,num_samples)
-            array___r.append((n,p4))
+
+        results = []
+        threads = []
+
+        for i in range(1, 21):
+            n = round(i * (1 / 20), 2)
+            thread = threading.Thread(target=simulate_single, args=(j, sigma_dB, n, num_samples, results))
+            threads.append(thread)
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+
+        for n_val, p4 in results:
+            array___r.append((n_val, p4))
             if p4 > max_p4:
                 max_p4 = p4
-                max_n = n
-                
-        
-        print('V value: ', j ,', Max eta: ',max_n, ', P(SIR>=-5dB): ',max_p4)
-        p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac = simulator(j,sigma_dB,max_n,num_samples)
-        save_val.append((sorted_SIR_3,sorted_SIR_3_frac))
+                max_n = n_val
+
+        print('V value: ', j, ', Max eta: ', max_n, ', P(SIR>=-5dB): ', max_p4)
+        _, _, _, _, sorted_SIR_3, _, _, sorted_SIR_frac, sorted_SIR_3_frac, _ = simulator(j, sigma_dB, max_n, num_samples)
+        save_val.append((sorted_SIR_3, sorted_SIR_3_frac))
     
     
     
