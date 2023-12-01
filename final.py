@@ -274,7 +274,7 @@ def ex1(num_samples):
     v = 3.8
     sigma_dB = 8
     n= 0
-    p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac = simulator(v, sigma_dB, n,num_samples)
+    p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, _, _, _ = simulator(v, sigma_dB, n,num_samples)
     
     print('F1, P(SIR >= -5dB): ', p1)
     print('F3, P(SIR >= -5dB): ', p2) 
