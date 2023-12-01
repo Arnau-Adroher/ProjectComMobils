@@ -307,6 +307,10 @@ def ex2(num_samples):
     max_p4 = 0
     max_n = 0
     array___r = []
+    
+    results = []
+    threads = []
+    
     for i in range(1, 21):
         n = round(i * (1 / 20), 2)
         thread = threading.Thread(target=simulate_single, args=(v, sigma_dB, n, num_samples, results))
