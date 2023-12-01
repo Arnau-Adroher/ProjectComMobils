@@ -158,12 +158,13 @@ def calculate_percentage(sorted_SIR, threshold=-5):
             percentage = (1 - (val / len(sorted_SIR))) * 100
             #print(f'SIR >= {threshold}: {percentage:.2f}%')
             break
+    return percentage
 
     
 
 
     
-def ex_1_2(v, sigma_dB, n):
+def simulator(v, sigma_dB, n,num_samples):
     centers = calculate_hexagon_centers(2)
     #print(centers)
     ref_cent = 0,0
@@ -175,7 +176,7 @@ def ex_1_2(v, sigma_dB, n):
     list_of_SIR_9_frac = []
 
 
-    for i in range (1,50001):
+    for i in range (1,num_samples+1):
         SIR = 0
         SIR_3 = 0
         SIR_9 = 0
@@ -249,69 +250,39 @@ def ex_1_2(v, sigma_dB, n):
     
     # Ex1
    # print('sorted_SIR')
-    calculate_percentage(sorted_SIR)
+    p1 = calculate_percentage(sorted_SIR)
 
    # print('sorted_SIR_3')
-    calculate_percentage(sorted_SIR_3)
+    p2 = calculate_percentage(sorted_SIR_3)
 
    # print('sorted_SIR_9')
-    calculate_percentage(sorted_SIR_9)
+    p3 = calculate_percentage(sorted_SIR_9)
     
-    '''
-    val = 0
-    for i in sorted_SIR:
-        val += 1
-        if i >= -5:
-            #print('SIR >= -5 frac 1: ',(1-(val/1000))*100,'%')
-            break
-    val = 0
     
-    for i in sorted_SIR_3:
-        val += 1
-        if i >= -5:
-            #print('SIR >= -5 frac 3: ',(1-(val/1000))*100,'%')
-            break
-    val = 0
+    p4 = calculate_percentage(sorted_SIR_3_frac)
+    
+    return p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac
+    
 
-    for i in sorted_SIR_9:
-        val += 1
-        if i >= -5:
-            #print('SIR >= -5 frac 9: ',(1-(val/1000))*100,'%')
-            break
-            
-    val = 0
-    '''
-    #EX2
-    val = 0
-    for i in sorted_SIR_3_frac:
-        val += 1
-        if i >= -5:
-            x = (1-(val/50000))*100
-            #print('SIR >= -5 frac 3: ',(1-(val/1000))*100,'%')
-            break
-  
-    return x
-           
-    # Calculate the cumulative distribution function for both arrays
+def ex1(num_samples):
+    v = 3.8
+    sigma_dB = 8
+    n= 0
+    p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac = simulator(v, sigma_dB, n,num_samples)
+    
+    print('F1, P(SIR >= -5dB): ', p1)
+    print('F3, P(SIR >= -5dB): ', p2) 
+    print('F9, P(SIR >= -5dB): ', p3)     
+    
+    #plot
     cumulative_prob = np.linspace(0, 1, len(sorted_SIR))
     cumulative_prob_3 = np.linspace(0, 1, len(sorted_SIR_3))
     cumulative_prob_9 = np.linspace(0, 1, len(sorted_SIR_9))
-
-    cumulative_prob_frac = np.linspace(0, 1, len(sorted_SIR_frac))
-    cumulative_prob_3_frac = np.linspace(0, 1, len(sorted_SIR_3_frac))
-    cumulative_prob_9_frac = np.linspace(0, 1, len(sorted_SIR_9_frac))
-
-    # Plot the CDF curves for both arrays
+    
     plt.figure(2)
-    #plt.plot(sorted_SIR, cumulative_prob, label='CDF reuse factor 1', color='blue')
+    plt.plot(sorted_SIR, cumulative_prob, label='CDF reuse factor 1', color='blue')
     plt.plot(sorted_SIR_3, cumulative_prob_3, label='CDF reuse factor 3', color='red')
-    #plt.plot(sorted_SIR_9, cumulative_prob_9, label='CDF reuse factor 9', color='green')
-
-    #plt.plot(sorted_SIR_frac, cumulative_prob_frac, label='CDF reuse factor 1', color='pink')
-    plt.plot(sorted_SIR_3_frac, cumulative_prob_3_frac, label='CDF reuse factor 3', color='green')
-    #plt.plot(sorted_SIR_9_frac, cumulative_prob_9_frac, label='CDF reuse factor 9', color='orange')
-
-    # Add labels and title
+    plt.plot(sorted_SIR_9, cumulative_prob_9, label='CDF reuse factor 9', color='green')
     plt.title('Cumulative Distribution Function (CDF) of Random Data')
     plt.xlabel('SIR(dB)')
     plt.ylabel('Cumulative Probability')
@@ -319,53 +290,81 @@ def ex_1_2(v, sigma_dB, n):
     plt.xlim(-20, 40)
 
     plt.grid(True)
-    plt.legend()  # Show legend if multiple curves are plotted
-   
+    plt.legend()  
+    #plt.show()
     
     
-def main():
-    ###Values###
+    
+def ex2(num_samples):
     v = 3.8
-    layers = 2
     sigma_dB = 8
-    ############
-    #plot_hexagons(2)
-    ex_1_2(v,sigma_dB,0.55)
-    '''
+    max_p4 = 0
     max_n = 0
-    max_x = 0
     array___r = []
     for i in range (1,21):
-        n = i*(1/20)
-        print(n)
-        x = ex_1_2(v,sigma_dB,n)
-        array___r.append((n,x))
-        if x > max_x:
-            max_x = x
+        n = round(i*(1/20),2)
+        #print(n)
+        p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac = simulator(v,sigma_dB,n,num_samples)
+        array___r.append((n,p4))
+        if p4 > max_p4:
+            max_x = p4
             max_n = n
     
     print(max_n, max_x)
     print(array___r)
 
     x_values, y_values = zip(*array___r)
-
+    
+    plt.figure(3)
     # Plotting the points
-    plt.scatter(x_values, y_values, label='Points', color='blue', marker='o')
+    plt.scatter(x_values, y_values, label='P(SIR>=-5dB)/Eta', color='blue', marker='o')
 
     # Adding labels and title
-    plt.xlabel('X-axis Label')
-    plt.ylabel('Y-axis Label')
+    plt.xlabel('Eta value')
+    plt.ylabel('P(SIR>=-5dB)')
     plt.title('Scatter Plot of Points')
 
     # Adding a legend
     plt.legend()
-    '''
-    # Display the plot
-    plt.show()
+    
+    # Once max eta is found plot the CDFs SIRs
+    p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac = simulator(v,sigma_dB,max_n,num_samples)
+    cumulative_prob_3 = np.linspace(0, 1, len(sorted_SIR_3))
+    cumulative_prob_3_frac = np.linspace(0, 1, len(sorted_SIR_3_frac))
+    
+    plt.figure(4)
+    plt.plot(sorted_SIR_3, cumulative_prob_3, label='CDF reuse factor 3', color='red')
+    plt.plot(sorted_SIR_3_frac, cumulative_prob_3_frac, label='CDF reuse factor 3 fractional power', color='green')
+    
+    plt.title('Cumulative Distribution Function (CDF) of Random Data')
+    plt.xlabel('SIR(dB)')
+    plt.ylabel('Cumulative Probability')
 
-    # center_x = 0
-    # center_y = 0
-    # plot_hexagon_and_sectors(center_x, center_y)
+    plt.xlim(-20, 40)
+
+    plt.grid(True)
+    plt.legend()
+    
+
+def main():
+    ###Values###
+    layers = 2
+    num_samples = 1000
+    ############
+    
+    #plot_hexagons(2)
+    
+    
+    print('-------------EX1-------------')
+    ex1(num_samples)
+    
+    print('-------------EX2-------------')
+    ex2(num_samples)
+    
+    #plots
+    plt.show()
+    
+
     
 if __name__ == '__main__':
     sys.exit(main())
