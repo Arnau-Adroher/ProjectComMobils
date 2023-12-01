@@ -282,16 +282,16 @@ def ex_1_2(v, sigma_dB, n):
     val = 0
     '''
     #EX2
-    x = 0
+    val = 0
     for i in sorted_SIR_3_frac:
         val += 1
         if i >= -5:
-            x = (1-(val/1000))*100
+            x = (1-(val/50000))*100
             #print('SIR >= -5 frac 3: ',(1-(val/1000))*100,'%')
             break
   
     return x
-    '''        
+           
     # Calculate the cumulative distribution function for both arrays
     cumulative_prob = np.linspace(0, 1, len(sorted_SIR))
     cumulative_prob_3 = np.linspace(0, 1, len(sorted_SIR_3))
@@ -303,13 +303,13 @@ def ex_1_2(v, sigma_dB, n):
 
     # Plot the CDF curves for both arrays
     plt.figure(2)
-    plt.plot(sorted_SIR, cumulative_prob, label='CDF reuse factor 1', color='blue')
+    #plt.plot(sorted_SIR, cumulative_prob, label='CDF reuse factor 1', color='blue')
     plt.plot(sorted_SIR_3, cumulative_prob_3, label='CDF reuse factor 3', color='red')
-    plt.plot(sorted_SIR_9, cumulative_prob_9, label='CDF reuse factor 9', color='green')
+    #plt.plot(sorted_SIR_9, cumulative_prob_9, label='CDF reuse factor 9', color='green')
 
-    plt.plot(sorted_SIR_frac, cumulative_prob_frac, label='CDF reuse factor 1', color='pink')
-    plt.plot(sorted_SIR_3_frac, cumulative_prob_3_frac, label='CDF reuse factor 3', color='yellow')
-    plt.plot(sorted_SIR_9_frac, cumulative_prob_9_frac, label='CDF reuse factor 9', color='orange')
+    #plt.plot(sorted_SIR_frac, cumulative_prob_frac, label='CDF reuse factor 1', color='pink')
+    plt.plot(sorted_SIR_3_frac, cumulative_prob_3_frac, label='CDF reuse factor 3', color='green')
+    #plt.plot(sorted_SIR_9_frac, cumulative_prob_9_frac, label='CDF reuse factor 9', color='orange')
 
     # Add labels and title
     plt.title('Cumulative Distribution Function (CDF) of Random Data')
@@ -321,7 +321,7 @@ def ex_1_2(v, sigma_dB, n):
     plt.grid(True)
     plt.legend()  # Show legend if multiple curves are plotted
    
-    '''
+    
     
 def main():
     ###Values###
@@ -330,8 +330,8 @@ def main():
     sigma_dB = 8
     ############
     #plot_hexagons(2)
-    #ex_1(v,sigma_dB)
-    
+    ex_1_2(v,sigma_dB,0.55)
+    '''
     max_n = 0
     max_x = 0
     array___r = []
@@ -339,7 +339,7 @@ def main():
         n = i*(1/20)
         print(n)
         x = ex_1_2(v,sigma_dB,n)
-        array___r.append(x)
+        array___r.append((n,x))
         if x > max_x:
             max_x = x
             max_n = n
@@ -359,7 +359,7 @@ def main():
 
     # Adding a legend
     plt.legend()
-
+    '''
     # Display the plot
     plt.show()
 
