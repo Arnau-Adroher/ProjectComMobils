@@ -266,8 +266,8 @@ def simulator(v, sigma_dB, n,num_samples):
     return p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac
     
 def simulate_single(v, sigma_dB, n, num_samples, result_list):
-    p1, p2, p3, p4, sorted_SIR, _, _, _, _, _ = simulator(v, sigma_dB, n, num_samples)
-    result_list.append((n, p4))
+    p1, p2, p3, p4, sorted_SIR, sorted_SIR_3, _, _, sorted_SIR_3_frac, _ = simulator(v, sigma_dB, n, num_samples)
+    result_list.append((n, p4,sorted_SIR,sorted_SIR_3_frac))
  
 
 def ex1(num_samples):
@@ -305,7 +305,6 @@ def ex2(num_samples):
     v = 3.8
     sigma_dB = 8
     max_p4 = 0
-    max_n = 0
     array___r = []
     
     results = []
@@ -320,11 +319,13 @@ def ex2(num_samples):
     for thread in threads:
         thread.join()
 
-    for n_val, p4 in results:
+    for n_val, p4,sorted_SIR_3,sorted_SIR_3_frac in results:
         array___r.append((n_val, p4))
         if p4 > max_p4:
             max_p4 = p4
             max_n = n_val
+            max_SIR = sorted_SIR_3
+            max_SIR_frac = sorted_SIR_3_frac
     
     print('Max eta: ',max_n, ', P(SIR>=-5dB): ', max_p4)
     print(array___r)
@@ -344,13 +345,15 @@ def ex2(num_samples):
     plt.legend()
     
     # Once max eta is found plot the CDFs SIRs
+    '''
     p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac = simulator(v,sigma_dB,max_n,num_samples)
-    cumulative_prob_3 = np.linspace(0, 1, len(sorted_SIR_3))
-    cumulative_prob_3_frac = np.linspace(0, 1, len(sorted_SIR_3_frac))
+    '''
+    cumulative_prob_3 = np.linspace(0, 1, len(max_SIR))
+    cumulative_prob_3_frac = np.linspace(0, 1, len(max_SIR_frac))
     
     plt.figure(4)
-    plt.plot(sorted_SIR_3, cumulative_prob_3, label='CDF reuse factor 3', color='red')
-    plt.plot(sorted_SIR_3_frac, cumulative_prob_3_frac, label='CDF reuse factor 3 fractional power', color='green')
+    plt.plot(max_SIR, cumulative_prob_3, label='CDF reuse factor 3', color='red')
+    plt.plot(max_SIR_frac, cumulative_prob_3_frac, label='CDF reuse factor 3 fractional power', color='green')
     
     plt.title('Cumulative Distribution Function (CDF) of Random Data')
     plt.xlabel('SIR(dB)')
@@ -389,15 +392,16 @@ def ex3(num_samples,max_n_v3_8):
         for thread in threads:
             thread.join()
 
-        for n_val, p4 in results:
+        for n_val, p4,sorted_SIR_3,sorted_SIR_3_frac in results:
             array___r.append((n_val, p4))
             if p4 > max_p4:
                 max_p4 = p4
                 max_n = n_val
+                max_SIR = sorted_SIR_3
+                max_SIR_frac = sorted_SIR_3_frac
 
         print('V value: ', j, ', Max eta: ', max_n, ', P(SIR>=-5dB): ', max_p4)
-        _, _, _, _, sorted_SIR_3, _, _, sorted_SIR_frac, sorted_SIR_3_frac, _ = simulator(j, sigma_dB, max_n, num_samples)
-        save_val.append((sorted_SIR_3, sorted_SIR_3_frac))
+        save_val.append((max_SIR, max_SIR_frac))
     
     
     
@@ -432,7 +436,7 @@ def ex3(num_samples,max_n_v3_8):
 def main():
     ###Values###
     layers = 2
-    num_samples = 500
+    num_samples = 5000
     ############
     
     #plot_hexagons(2)
