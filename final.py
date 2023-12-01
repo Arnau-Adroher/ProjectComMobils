@@ -4,6 +4,8 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import Point, Polygon
+import time
+import concurrent.futures
 
 def calc_distance(punto1, punto2):
     x1, y1 = punto1
@@ -262,7 +264,7 @@ def simulator(v, sigma_dB, n,num_samples):
     p4 = calculate_percentage(sorted_SIR_3_frac)
     
     return p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac
-    
+ 
 
 def ex1(num_samples):
     v = 3.8
@@ -345,11 +347,15 @@ def ex2(num_samples):
     plt.grid(True)
     plt.legend()
     
-def ex3(num_samples):
+    return max_n
+    
+def ex3(num_samples,max_n_v3_8):
     v = 3.8
     sigma_dB = 8
-    v_values = (3,3.8,4.5)
+    v_values = (3, 4.5)
     save_val = []
+    
+    p1,p2,p3,p4, sorted_SIR, sorted_SIR_3_v3_8, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac_v3_8, sorted_SIR_9_frac = simulator(v, sigma_dB, max_n_v3_8,num_samples)
     
     for j in v_values:
         max_p4 = 0
@@ -368,23 +374,24 @@ def ex3(num_samples):
         print('V value: ', j ,', Max eta: ',max_n, ', P(SIR>=-5dB): ',max_p4)
         p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac = simulator(j,sigma_dB,max_n,num_samples)
         save_val.append((sorted_SIR_3,sorted_SIR_3_frac))
-
-
+    
+    
+    
     cumulative_prob_3_v3 = np.linspace(0, 1, len(save_val[0][0]))
     cumulative_prob_3_frac_v3 = np.linspace(0, 1, len(save_val[0][1]))
-    cumulative_prob_3_v3_8 = np.linspace(0, 1, len(save_val[1][0]))
-    cumulative_prob_3_frac_v3_8 = np.linspace(0, 1, len(save_val[1][1]))
-    cumulative_prob_3_v4_5 = np.linspace(0, 1, len(save_val[2][0]))
-    cumulative_prob_3_frac_v4_5 = np.linspace(0, 1, len(save_val[2][1]))
+    cumulative_prob_3_v3_8 = np.linspace(0, 1, len(sorted_SIR_3_v3_8))
+    cumulative_prob_3_frac_v3_8 = np.linspace(0, 1, len(sorted_SIR_3_frac_v3_8))
+    cumulative_prob_3_v4_5 = np.linspace(0, 1, len(save_val[1][0]))
+    cumulative_prob_3_frac_v4_5 = np.linspace(0, 1, len(save_val[1][1]))
     
     plt.figure(5)
     
     plt.plot(save_val[0][0], cumulative_prob_3_v3, label='CDF reuse factor 3 v=3', color='red')
     plt.plot(save_val[0][1], cumulative_prob_3_frac_v3, label='CDF reuse factor 3 fractional power v=3', color='green')
-    plt.plot(save_val[1][0], cumulative_prob_3_v3_8, label='CDF reuse factor 3 v=3.8', color='blue')
-    plt.plot(save_val[1][1], cumulative_prob_3_frac_v3_8, label='CDF reuse factor 3 fractional power v=3.8', color='orange')
-    plt.plot(save_val[2][0], cumulative_prob_3_v4_5, label='CDF reuse factor 3', color='purple')
-    plt.plot(save_val[2][1], cumulative_prob_3_frac_v4_5, label='CDF reuse factor 3 fractional power v=3.8', color='brown')
+    plt.plot(sorted_SIR_3_v3_8, cumulative_prob_3_v3_8, label='CDF reuse factor 3 v=3.8', color='blue')
+    plt.plot(sorted_SIR_3_frac_v3_8, cumulative_prob_3_frac_v3_8, label='CDF reuse factor 3 fractional power v=3.8', color='orange')
+    plt.plot(save_val[1][0], cumulative_prob_3_v4_5, label='CDF reuse factor 3', color='purple')
+    plt.plot(save_val[1][1], cumulative_prob_3_frac_v4_5, label='CDF reuse factor 3 fractional power v=3.8', color='brown')
 
     
     plt.title('Cumulative Distribution Function (CDF) of Random Data')
@@ -401,21 +408,32 @@ def ex3(num_samples):
 def main():
     ###Values###
     layers = 2
-    num_samples = 1000
+    num_samples = 500
     ############
     
     #plot_hexagons(2)
     
     
     print('-------------EX1-------------')
+    start_time = time.time()
     ex1(num_samples)
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print('Time for ex 1: ',elapsed_time)
     
     print('-------------EX2-------------')
-    ex2(num_samples)
-    
+    start_time = time.time()
+    eta_for_3_8 = ex2(num_samples)
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print('Time for ex 2: ',elapsed_time)
+     
     print('-------------EX3-------------')
-    ex3(num_samples)
-    
+    start_time = time.time()
+    ex3(num_samples, eta_for_3_8)
+    end_time = time.time()    
+    elapsed_time = end_time - start_time
+    print('Time for ex 3: ',elapsed_time)
     #plots
     plt.show()
     
