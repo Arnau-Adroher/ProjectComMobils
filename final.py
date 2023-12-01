@@ -307,14 +307,20 @@ def ex2(num_samples):
     max_p4 = 0
     max_n = 0
     array___r = []
-    for i in range (1,21):
-        n = round(i*(1/20),2)
-        #print(n)
-        p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac = simulator(v,sigma_dB,n,num_samples)
-        array___r.append((n,p4))
+    for i in range(1, 21):
+        n = round(i * (1 / 20), 2)
+        thread = threading.Thread(target=simulate_single, args=(j, sigma_dB, n, num_samples, results))
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
+
+    for n_val, p4 in results:
+        array___r.append((n_val, p4))
         if p4 > max_p4:
             max_p4 = p4
-            max_n = n
+            max_n = n_val
     
     print('Max eta: ',max_n, ', P(SIR>=-5dB): ', max_p4)
     print(array___r)
@@ -386,7 +392,7 @@ def ex3(num_samples,max_n_v3_8):
                 max_n = n_val
 
         print('V value: ', j, ', Max eta: ', max_n, ', P(SIR>=-5dB): ', max_p4)
-        _, _, _, _, sorted_SIR_3, _, _, sorted_SIR_frac, sorted_SIR_3_frac, _ = simulator(j, sigma_dB, max_n, num_samples)
+        _, _, _, _, sorted_SIR_3, _, _, sorted_SIR_frac, sorted_SIR_3_frac, _ = simulator(v, sigma_dB, max_n, num_samples)
         save_val.append((sorted_SIR_3, sorted_SIR_3_frac))
     
     
