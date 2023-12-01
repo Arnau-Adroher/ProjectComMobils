@@ -309,7 +309,7 @@ def ex2(num_samples):
     array___r = []
     for i in range(1, 21):
         n = round(i * (1 / 20), 2)
-        thread = threading.Thread(target=simulate_single, args=(j, sigma_dB, n, num_samples, results))
+        thread = threading.Thread(target=simulate_single, args=(v, sigma_dB, n, num_samples, results))
         threads.append(thread)
         thread.start()
 
@@ -391,8 +391,8 @@ def ex3(num_samples,max_n_v3_8):
                 max_p4 = p4
                 max_n = n_val
 
-        print('V value: ', v, ', Max eta: ', max_n, ', P(SIR>=-5dB): ', max_p4)
-        _, _, _, _, sorted_SIR_3, _, _, sorted_SIR_frac, sorted_SIR_3_frac, _ = simulator(v, sigma_dB, max_n, num_samples)
+        print('V value: ', j, ', Max eta: ', max_n, ', P(SIR>=-5dB): ', max_p4)
+        _, _, _, _, sorted_SIR_3, _, _, sorted_SIR_frac, sorted_SIR_3_frac, _ = simulator(j, sigma_dB, max_n, num_samples)
         save_val.append((sorted_SIR_3, sorted_SIR_3_frac))
     
     
