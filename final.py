@@ -307,10 +307,10 @@ def ex2(num_samples):
         p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac = simulator(v,sigma_dB,n,num_samples)
         array___r.append((n,p4))
         if p4 > max_p4:
-            max_x = p4
+            max_p4 = p4
             max_n = n
     
-    print(max_n, max_x)
+    print('Max eta: ',max_n, ', P(SIR>=-5dB): ', max_p4)
     print(array___r)
 
     x_values, y_values = zip(*array___r)
@@ -345,6 +345,58 @@ def ex2(num_samples):
     plt.grid(True)
     plt.legend()
     
+def ex3(num_samples):
+    v = 3.8
+    sigma_dB = 8
+    v_values = (3,3.8,4.5)
+    save_val = []
+    
+    for j in v_values:
+        max_p4 = 0
+        max_n = 0
+        array___r = []
+        for i in range (1,21):
+            n = round(i*(1/20),2)
+            #print(n)
+            p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac = simulator(v,sigma_dB,n,num_samples)
+            array___r.append((n,p4))
+            if p4 > max_p4:
+                max_p4 = p4
+                max_n = n
+                
+        
+        print('V value: ', j ,', Max eta: ',max_n, ', P(SIR>=-5dB): ',max_p4)
+        p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac = simulator(j,sigma_dB,max_n,num_samples)
+        save_val.append((sorted_SIR_3,sorted_SIR_3_frac))
+
+
+    cumulative_prob_3_v3 = np.linspace(0, 1, len(save_val[0][0]))
+    cumulative_prob_3_frac_v3 = np.linspace(0, 1, len(save_val[0][1]))
+    cumulative_prob_3_v3_8 = np.linspace(0, 1, len(save_val[1][0]))
+    cumulative_prob_3_frac_v3_8 = np.linspace(0, 1, len(save_val[1][1]))
+    cumulative_prob_3_v4_5 = np.linspace(0, 1, len(save_val[2][0]))
+    cumulative_prob_3_frac_v4_5 = np.linspace(0, 1, len(save_val[2][1]))
+    
+    plt.figure(5)
+    
+    plt.plot(save_val[0][0], cumulative_prob_3_v3, label='CDF reuse factor 3 v=3', color='red')
+    plt.plot(save_val[0][1], cumulative_prob_3_frac_v3, label='CDF reuse factor 3 fractional power v=3', color='green')
+    plt.plot(save_val[1][0], cumulative_prob_3_v3_8, label='CDF reuse factor 3 v=3.8', color='blue')
+    plt.plot(save_val[1][1], cumulative_prob_3_frac_v3_8, label='CDF reuse factor 3 fractional power v=3.8', color='orange')
+    plt.plot(save_val[2][0], cumulative_prob_3_v4_5, label='CDF reuse factor 3', color='purple')
+    plt.plot(save_val[2][1], cumulative_prob_3_frac_v4_5, label='CDF reuse factor 3 fractional power v=3.8', color='brown')
+
+    
+    plt.title('Cumulative Distribution Function (CDF) of Random Data')
+    plt.xlabel('SIR(dB)')
+    plt.ylabel('Cumulative Probability')
+
+    plt.xlim(-20, 40)
+
+    plt.grid(True)
+    plt.legend()
+    
+    
 
 def main():
     ###Values###
@@ -360,6 +412,9 @@ def main():
     
     print('-------------EX2-------------')
     ex2(num_samples)
+    
+    print('-------------EX3-------------')
+    ex3(num_samples)
     
     #plots
     plt.show()
