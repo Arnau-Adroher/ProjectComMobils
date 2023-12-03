@@ -419,7 +419,7 @@ def ex3(num_samples,max_n_v3_8):
     plt.plot(sorted_SIR_3_v3_8, cumulative_prob_3_v3_8, label='CDF reuse factor 3 v=3.8', color='blue')
     plt.plot(sorted_SIR_3_frac_v3_8, cumulative_prob_3_frac_v3_8, label='CDF reuse factor 3 fractional power v=3.8', color='orange')
     plt.plot(save_val[1][0], cumulative_prob_3_v4_5, label='CDF reuse factor 3', color='purple')
-    plt.plot(save_val[1][1], cumulative_prob_3_frac_v4_5, label='CDF reuse factor 3 fractional power v=3.8', color='brown')
+    plt.plot(save_val[1][1], cumulative_prob_3_frac_v4_5, label='CDF reuse factor 3 fractional power v=4.5', color='brown')
 
     
     plt.title('Cumulative Distribution Function (CDF) of Random Data')
@@ -431,37 +431,47 @@ def ex3(num_samples,max_n_v3_8):
     plt.grid(True)
     plt.legend()
     
-    
-
-def main():
-    ###Values###
-    layers = 2
-    num_samples = 5000
-    ############
-    
-    #plot_hexagons(2)
-    
-    
+def act1(num_samples):
     print('-------------EX1-------------')
     start_time = time.time()
     ex1(num_samples)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print('Time for ex 1: ',elapsed_time)
-    
+
+def act2(num_samples):
     print('-------------EX2-------------')
     start_time = time.time()
     eta_for_3_8 = ex2(num_samples)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print('Time for ex 2: ',elapsed_time)
-     
+
+    return eta_for_3_8
+
+def act3(num_samples, eta_for_3_8):
     print('-------------EX3-------------')
     start_time = time.time()
     ex3(num_samples, eta_for_3_8)
     end_time = time.time()    
     elapsed_time = end_time - start_time
     print('Time for ex 3: ',elapsed_time)
+
+def main():
+    ###Values###
+    layers = 2
+    num_samples = 50000
+    ############
+    
+    #plot_hexagons(layers)
+    
+    
+    #act1(num_samples)
+    
+    eta_for_3_8 = act2(num_samples)
+     
+    act3(num_samples, eta_for_3_8)
+
     #plots
     plt.show()
     
