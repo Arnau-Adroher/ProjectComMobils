@@ -313,6 +313,10 @@ def simulator_power_control_off(v, sigma_dB, num_samples, bandwidth, SNR_gap_dB,
 
         # Calculate throughput
         effective_bandwidth = bandwidth / reuse_factor  # Replace with actual reuse factor
+        if(reuse_factor==3):
+            d_all =  d_all_3   
+        if(reuse_factor==3):
+            d_all =  d_all_9       
         throughput = calculate_throughput(effective_bandwidth, d_all, SNR_gap_dB, bandwidth)
         list_of_throughput.append(throughput)
 
@@ -549,7 +553,7 @@ def act4(num_samples):
 def main():
     ###Values###
     layers = 2
-    num_samples = 10000
+    num_samples = 1000
     ############
     
     plot_hexagons(layers)
