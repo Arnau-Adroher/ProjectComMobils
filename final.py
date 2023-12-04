@@ -125,7 +125,7 @@ def calculate_hexagon_centers(n_layers, size=1):
 
 
 def plot_hexagons(n_layers):
-    plt.figure(1)
+    plt.figure()
     hexagon_centers = calculate_hexagon_centers(n_layers)
 
     for center in hexagon_centers:
@@ -240,8 +240,6 @@ def simulator(v, sigma_dB, n,num_samples):
         list_of_SIR_3_frac.append(SIR_3_frac)  
         list_of_SIR_9_frac.append(SIR_9_frac)
         
-              
-        
     sorted_SIR = np.sort(list_of_SIR)
     sorted_SIR_3 = np.sort(list_of_SIR_3)
     sorted_SIR_9 = np.sort(list_of_SIR_9)
@@ -260,10 +258,70 @@ def simulator(v, sigma_dB, n,num_samples):
    # print('sorted_SIR_9')
     p3 = calculate_percentage(sorted_SIR_9)
     
-    
+    # print('sorted_SIR_3_frac')
     p4 = calculate_percentage(sorted_SIR_3_frac)
     
     return p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac
+
+def calculate_throughput(effective_bandwidth, total_interference, snr_gap_dB, bandwidth):
+    # Replace this with your actual function to calculate throughput
+    # This could involve Shannon's Capacity Formula or any other appropriate model
+    snr = snr_gap_dB + lineal_to_db(effective_bandwidth / total_interference)
+    throughput = bandwidth * np.log2(1 + 10**(snr / 10))
+    return throughput
+
+def simulator_power_control_off(v, sigma_dB, num_samples, bandwidth, SNR_gap_dB, reuse_factor):
+    centers = calculate_hexagon_centers(2)
+    ref_cent = 0, 0
+    list_of_throughput = []
+
+    for i in range(1, num_samples + 1):
+        throughput = 0
+        d_all = 0
+        d_all_3 = 0
+        d_all_9 = 0
+        center_id = 0
+
+        for center in centers:
+            c_x = center[0]
+            c_y = center[1]
+            sectors = get_sectors(c_x, c_y)
+            random_points = get_random_points_in_sectors(sectors)
+
+            if c_y == 0 and c_x == 0:
+                x = db_to_lineal(generate_shadow_fading(sigma_dB))
+                d = x / (calc_distance(random_points[0], ref_cent) ** (v))
+            else:
+                for j in range(0, 3):
+                    angle = calculate_angle(ref_cent, random_points[j])
+
+                    if angle <= 120 and angle >= 0:
+                        x2 = db_to_lineal(generate_shadow_fading(sigma_dB))
+
+                        if (calc_distance(random_points[j], center)) > 1:
+                            print("error")
+
+                        val = x2 / (calc_distance(random_points[j], ref_cent) ** (v))
+                        d_all += val
+
+                        if j == 0:
+                            d_all_3 += val
+                            if center_id == 8 or center_id == 18:
+                                d_all_9 += val
+
+            center_id += 1
+
+        # Calculate throughput
+        effective_bandwidth = bandwidth / reuse_factor  # Replace with actual reuse factor
+        throughput = calculate_throughput(effective_bandwidth, d_all, SNR_gap_dB, bandwidth)
+        list_of_throughput.append(throughput)
+
+    sorted_throughput = np.sort(list_of_throughput)
+    percentiles = calculate_percentage(sorted_throughput)
+
+    return percentiles, sorted_throughput
+
+
     
 def simulate_single(v, sigma_dB, n, num_samples, result_list):
     p1, p2, p3, p4, sorted_SIR, sorted_SIR_3, _, _, sorted_SIR_3_frac, _ = simulator(v, sigma_dB, n, num_samples)
@@ -285,7 +343,7 @@ def ex1(num_samples):
     cumulative_prob_3 = np.linspace(0, 1, len(sorted_SIR_3))
     cumulative_prob_9 = np.linspace(0, 1, len(sorted_SIR_9))
     
-    plt.figure(2)
+    plt.figure()
     plt.plot(sorted_SIR, cumulative_prob, label='CDF reuse factor 1', color='blue')
     plt.plot(sorted_SIR_3, cumulative_prob_3, label='CDF reuse factor 3', color='red')
     plt.plot(sorted_SIR_9, cumulative_prob_9, label='CDF reuse factor 9', color='green')
@@ -297,9 +355,7 @@ def ex1(num_samples):
 
     plt.grid(True)
     plt.legend()  
-    #plt.show()
-    
-    
+    #plt.show()   
     
 def ex2(num_samples):
     v = 3.8
@@ -332,7 +388,7 @@ def ex2(num_samples):
 
     x_values, y_values = zip(*array___r)
     
-    plt.figure(3)
+    plt.figure()
     # Plotting the points
     plt.scatter(x_values, y_values, label='P(SIR>=-5dB)/Eta', color='blue', marker='o')
 
@@ -412,7 +468,7 @@ def ex3(num_samples,max_n_v3_8):
     cumulative_prob_3_v4_5 = np.linspace(0, 1, len(save_val[1][0]))
     cumulative_prob_3_frac_v4_5 = np.linspace(0, 1, len(save_val[1][1]))
     
-    plt.figure(5)
+    plt.figure()
     
     plt.plot(save_val[0][0], cumulative_prob_3_v3, label='CDF reuse factor 3 v=3', color='red')
     plt.plot(save_val[0][1], cumulative_prob_3_frac_v3, label='CDF reuse factor 3 fractional power v=3', color='green')
@@ -431,6 +487,31 @@ def ex3(num_samples,max_n_v3_8):
     plt.grid(True)
     plt.legend()
     
+def ex4(num_samples):
+    v = 3.8
+    sigma_dB = 8
+    b = 100
+    SNR_gap_dB = 4
+
+    reuse_factors = [1, 3, 9]
+    plt.figure()
+
+    for reuse_factor in reuse_factors:
+        p1, sorted_throughput = simulator_power_control_off(v, sigma_dB, num_samples, b, SNR_gap_dB, reuse_factor)
+
+        print(f'Reuse Factor {reuse_factor}, P(Throughput >= X): ', p1)
+
+        # Plot
+        cumulative_prob = np.linspace(0, 1, len(sorted_throughput))
+
+        plt.plot(sorted_throughput, cumulative_prob, label=f'CDF reuse factor {reuse_factor}')
+        
+    plt.title('Cumulative Distribution Function (CDF) of Throughput')
+    plt.xlabel('Throughput')
+    plt.ylabel('Cumulative Probability')
+    plt.grid(True)
+    plt.legend()
+
 def act1(num_samples):
     print('-------------EX1-------------')
     start_time = time.time()
@@ -457,20 +538,30 @@ def act3(num_samples, eta_for_3_8):
     elapsed_time = end_time - start_time
     print('Time for ex 3: ',elapsed_time)
 
+def act4(num_samples):
+    print('-------------EX4-------------')
+    start_time = time.time()
+    ex4(num_samples)
+    end_time = time.time()    
+    elapsed_time = end_time - start_time
+    print('Time for ex 4: ',elapsed_time)
+
 def main():
     ###Values###
     layers = 2
-    num_samples = 50000
+    num_samples = 10000
     ############
     
-    #plot_hexagons(layers)
+    plot_hexagons(layers)
     
     
-    #act1(num_samples)
+    act1(num_samples)
     
-    eta_for_3_8 = act2(num_samples)
-     
+    eta_for_3_8 = act2(num_samples)  
+
     act3(num_samples, eta_for_3_8)
+
+    act4(num_samples)
 
     #plots
     plt.show()
