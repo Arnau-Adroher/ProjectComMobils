@@ -321,9 +321,13 @@ def simulator_power_control_off(v, sigma_dB, num_samples, bandwidth, SNR_gap_dB,
         list_of_throughput.append(throughput)
 
     sorted_throughput = np.sort(list_of_throughput)
-    percentiles = calculate_percentage(sorted_throughput)
 
-    return percentiles, sorted_throughput
+    # Calculate average bitrate and bitrate attained by 97% of users
+    average_bitrate = np.mean(sorted_throughput)
+    bitrate_97 = np.percentile(sorted_throughput, 97)
+
+    return average_bitrate, bitrate_97, sorted_throughput
+
 
 
     
@@ -494,24 +498,24 @@ def ex3(num_samples,max_n_v3_8):
 def ex4(num_samples):
     v = 3.8
     sigma_dB = 8
-    b = 100
+    b = 100e6  # Bandwidth in Hz
     SNR_gap_dB = 4
 
     reuse_factors = [1, 3, 9]
     plt.figure()
 
     for reuse_factor in reuse_factors:
-        p1, sorted_throughput = simulator_power_control_off(v, sigma_dB, num_samples, b, SNR_gap_dB, reuse_factor)
+        average_bitrate, bitrate_97, sorted_throughput = simulator_power_control_off(v, sigma_dB, num_samples, b, SNR_gap_dB, reuse_factor)
 
-        print(f'Reuse Factor {reuse_factor}, P(Throughput >= X): ', p1)
+        print(f'Average bitrate for reuse factor {reuse_factor}: {average_bitrate} bps')
+        print(f'Bitrate attained by 97% of users for reuse factor {reuse_factor}: {bitrate_97} bps')
 
         # Plot
         cumulative_prob = np.linspace(0, 1, len(sorted_throughput))
-
         plt.plot(sorted_throughput, cumulative_prob, label=f'CDF reuse factor {reuse_factor}')
         
     plt.title('Cumulative Distribution Function (CDF) of Throughput')
-    plt.xlabel('Throughput')
+    plt.xlabel('Throughput (bps)')
     plt.ylabel('Cumulative Probability')
     plt.grid(True)
     plt.legend()
@@ -553,17 +557,16 @@ def act4(num_samples):
 def main():
     ###Values###
     layers = 2
-    num_samples = 1000
+    num_samples = 50000
     ############
     
-    plot_hexagons(layers)
+    #plot_hexagons(layers)
     
+   # act1(num_samples)
     
-    act1(num_samples)
-    
-    eta_for_3_8 = act2(num_samples)  
+   # eta_for_3_8 = act2(num_samples)  
 
-    act3(num_samples, eta_for_3_8)
+   # act3(num_samples, eta_for_3_8)
 
     act4(num_samples)
 
