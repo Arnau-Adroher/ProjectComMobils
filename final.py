@@ -507,8 +507,8 @@ def ex4(num_samples):
     for reuse_factor in reuse_factors:
         average_bitrate, bitrate_97, sorted_throughput = simulator_power_control_off(v, sigma_dB, num_samples, b, SNR_gap_dB, reuse_factor)
 
-        print(f'Average bitrate for reuse factor {reuse_factor}: {average_bitrate} bps')
-        print(f'Bitrate attained by 97% of users for reuse factor {reuse_factor}: {bitrate_97} bps')
+        print(f'Average bitrate for reuse factor {reuse_factor}: {round(average_bitrate/1e6,2)} Mbps')
+        print(f'Bitrate attained by 97% of users for reuse factor {reuse_factor}: {round(bitrate_97/1e6,2)} Mbps')
 
         # Plot
         cumulative_prob = np.linspace(0, 1, len(sorted_throughput))
@@ -557,10 +557,10 @@ def act4(num_samples):
 def main():
     ###Values###
     layers = 2
-    num_samples = 50000
+    num_samples = 100
     ############
     
-    #plot_hexagons(layers)
+    plot_hexagons(layers)
     
    # act1(num_samples)
     
