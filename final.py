@@ -263,74 +263,17 @@ def simulator(v, sigma_dB, n,num_samples):
     
     return p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac
 
-def calculate_throughput(effective_bandwidth, total_interference, snr_gap_dB, bandwidth):
+def calculate_throughput(effective_bandwidth, SIR_list, snr_gap_dB):
     # Replace this with your actual function to calculate throughput
     # This could involve Shannon's Capacity Formula or any other appropriate model
-    snr = snr_gap_dB + lineal_to_db(effective_bandwidth / total_interference)
-    throughput = bandwidth * np.log2(1 + 10**(snr / 10))
-    return throughput
+    th_list = []
+    for SIR in SIR_list:
+        total_interference = db_to_lineal(SIR - snr_gap_dB)
+        throughput = effective_bandwidth* np.log2(1+(total_interference))
+        th_list.append(throughput)
+    return th_list
 
-def simulator_power_control_off(v, sigma_dB, num_samples, bandwidth, SNR_gap_dB, reuse_factor):
-    centers = calculate_hexagon_centers(2)
-    ref_cent = 0, 0
-    list_of_throughput = []
-
-    for i in range(1, num_samples + 1):
-        throughput = 0
-        d_all = 0
-        d_all_3 = 0
-        d_all_9 = 0
-        center_id = 0
-
-        for center in centers:
-            c_x = center[0]
-            c_y = center[1]
-            sectors = get_sectors(c_x, c_y)
-            random_points = get_random_points_in_sectors(sectors)
-
-            if c_y == 0 and c_x == 0:
-                x = db_to_lineal(generate_shadow_fading(sigma_dB))
-                d = x / (calc_distance(random_points[0], ref_cent) ** (v))
-            else:
-                for j in range(0, 3):
-                    angle = calculate_angle(ref_cent, random_points[j])
-
-                    if angle <= 120 and angle >= 0:
-                        x2 = db_to_lineal(generate_shadow_fading(sigma_dB))
-
-                        if (calc_distance(random_points[j], center)) > 1:
-                            print("error")
-
-                        val = x2 / (calc_distance(random_points[j], ref_cent) ** (v))
-                        d_all += val
-
-                        if j == 0:
-                            d_all_3 += val
-                            if center_id == 8 or center_id == 18:
-                                d_all_9 += val
-
-            center_id += 1
-
-        # Calculate throughput
-        effective_bandwidth = bandwidth / reuse_factor  # Replace with actual reuse factor
-        if(reuse_factor==3):
-            d_all =  d_all_3   
-        if(reuse_factor==9):
-            d_all =  d_all_9       
-        throughput = calculate_throughput(effective_bandwidth, d_all, SNR_gap_dB, bandwidth)
-        list_of_throughput.append(throughput)
-
-    sorted_throughput = np.sort(list_of_throughput)
-
-    # Calculate average bitrate and bitrate attained by 97% of users
-    average_bitrate = np.mean(sorted_throughput)
-    bitrate_97 = np.percentile(sorted_throughput, 97)
-
-    return average_bitrate, bitrate_97, sorted_throughput
-
-
-
-    
+  
 def simulate_single(v, sigma_dB, n, num_samples, result_list):
     p1, p2, p3, p4, sorted_SIR, sorted_SIR_3, _, _, sorted_SIR_3_frac, _ = simulator(v, sigma_dB, n, num_samples)
     result_list.append((n, p4,sorted_SIR,sorted_SIR_3_frac))
@@ -502,23 +445,48 @@ def ex4(num_samples):
     SNR_gap_dB = 4
 
     reuse_factors = [1, 3, 9]
+    
+    
+    _,_,_,_, sorted_SIR, sorted_SIR_3, sorted_SIR_9, _, _, _ = simulator(v, sigma_dB, 0,num_samples)
+    
+
+    effective_bandwidth_3 = b/3
+    effective_bandwidth_9 = b/9
+
+    throughput1 = calculate_throughput(b, sorted_SIR, SNR_gap_dB)
+    throughput3 = calculate_throughput(effective_bandwidth_3, sorted_SIR_3, SNR_gap_dB)
+    throughput9 = calculate_throughput(effective_bandwidth_9, sorted_SIR_9, SNR_gap_dB)
+
+    average_bitrate_1 = np.mean(throughput1)
+    average_bitrate_3 = np.mean(throughput3)
+    average_bitrate_9 = np.mean(throughput9)
+    
+    bitrate_97_1 = np.percentile(throughput1, 97)
+    bitrate_97_3 = np.percentile(throughput3, 97)
+    bitrate_97_9 = np.percentile(throughput9, 97)
+
+
+    print(f'Average bitrate for reuse factor 1: {round(average_bitrate_1/1e6,2)} Mbps')
+    print(f'Bitrate attained by 97% of users for reuse factor 1: {round(bitrate_97_1/1e6,2)} Mbps')
+    print(f'Average bitrate for reuse factor 3: {round(average_bitrate_3/1e6,2)} Mbps')
+    print(f'Bitrate attained by 97% of users for reuse factor 3: {round(bitrate_97_3/1e6,2)} Mbps')
+    print(f'Average bitrate for reuse factor 9: {round(average_bitrate_9/1e6,2)} Mbps')
+    print(f'Bitrate attained by 97% of users for reuse factor 9: {round(bitrate_97_9/1e6,2)} Mbps')
+
+    cumulative_prob = np.linspace(0, 1, len(throughput1))
+    cumulative_prob_3 = np.linspace(0, 1, len(throughput3))
+    cumulative_prob_9 = np.linspace(0, 1, len(throughput9))
+    
     plt.figure()
-
-    for reuse_factor in reuse_factors:
-        average_bitrate, bitrate_97, sorted_throughput = simulator_power_control_off(v, sigma_dB, num_samples, b, SNR_gap_dB, reuse_factor)
-
-        print(f'Average bitrate for reuse factor {reuse_factor}: {round(average_bitrate/1e6,2)} Mbps')
-        print(f'Bitrate attained by 97% of users for reuse factor {reuse_factor}: {round(bitrate_97/1e6,2)} Mbps')
-
-        # Plot
-        cumulative_prob = np.linspace(0, 1, len(sorted_throughput))
-        plt.plot(sorted_throughput, cumulative_prob, label=f'CDF reuse factor {reuse_factor}')
-        
+    plt.plot(throughput1, cumulative_prob, label='CDF reuse factor 1', color='blue')
+    plt.plot(throughput3, cumulative_prob_3, label='CDF reuse factor 3', color='red')
+    plt.plot(throughput9, cumulative_prob_9, label='CDF reuse factor 9', color='green')
     plt.title('Cumulative Distribution Function (CDF) of Throughput')
     plt.xlabel('Throughput (bps)')
     plt.ylabel('Cumulative Probability')
     plt.grid(True)
     plt.legend()
+
 
 def act1(num_samples):
     print('-------------EX1-------------')
@@ -557,12 +525,12 @@ def act4(num_samples):
 def main():
     ###Values###
     layers = 2
-    num_samples = 100
+    num_samples = 5000
     ############
     
-    plot_hexagons(layers)
+    #plot_hexagons(layers)
     
-   # act1(num_samples)
+    act1(num_samples)
     
    # eta_for_3_8 = act2(num_samples)  
 
