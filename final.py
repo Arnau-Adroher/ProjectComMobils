@@ -263,11 +263,11 @@ def simulator(v, sigma_dB, n,num_samples):
     
     return p1,p2,p3,p4, sorted_SIR, sorted_SIR_3, sorted_SIR_9, sorted_SIR_frac, sorted_SIR_3_frac, sorted_SIR_9_frac
 
-def calculate_throughput(effective_bandwidth, total_interference, snr_gap_dB, bandwidth):
-    # Replace this with your actual function to calculate throughput
-    # This could involve Shannon's Capacity Formula or any other appropriate model
-    snr = snr_gap_dB + lineal_to_db(effective_bandwidth / total_interference)
-    throughput = bandwidth * np.log2(1 + 10**(snr / 10))
+def calculate_throughput(effective_bandwidth, SIRN, snr_gap_dB):
+   # snr = lineal_to_db(effective_bandwidth / SIRN) - snr_gap_dB
+    snr = np.log2(db_to_lineal(SIRN - snr_gap_dB) + 1)
+
+    throughput = effective_bandwidth * snr
     return throughput
 
 def simulator_power_control_off(v, sigma_dB, num_samples, bandwidth, SNR_gap_dB, reuse_factor):
@@ -281,7 +281,8 @@ def simulator_power_control_off(v, sigma_dB, num_samples, bandwidth, SNR_gap_dB,
         d_all_3 = 0
         d_all_9 = 0
         center_id = 0
-
+        list_of_SIR = []
+        
         for center in centers:
             c_x = center[0]
             c_y = center[1]
@@ -312,13 +313,17 @@ def simulator_power_control_off(v, sigma_dB, num_samples, bandwidth, SNR_gap_dB,
             center_id += 1
 
         # Calculate throughput
-        effective_bandwidth = bandwidth / reuse_factor  # Replace with actual reuse factor
+        effective_bandwidth = bandwidth / reuse_factor 
         if(reuse_factor==3):
             d_all =  d_all_3   
         if(reuse_factor==9):
             d_all =  d_all_9       
-        throughput = calculate_throughput(effective_bandwidth, d_all, SNR_gap_dB, bandwidth)
+
+        SIR = lineal_to_db(d/d_all)
+        throughput = calculate_throughput(effective_bandwidth, SIR, SNR_gap_dB)/10e6
         list_of_throughput.append(throughput)
+        list_of_SIR.append(SIR)
+        
 
     sorted_throughput = np.sort(list_of_throughput)
 
@@ -507,8 +512,8 @@ def ex4(num_samples):
     for reuse_factor in reuse_factors:
         average_bitrate, bitrate_97, sorted_throughput = simulator_power_control_off(v, sigma_dB, num_samples, b, SNR_gap_dB, reuse_factor)
 
-        print(f'Average bitrate for reuse factor {reuse_factor}: {average_bitrate} bps')
-        print(f'Bitrate attained by 97% of users for reuse factor {reuse_factor}: {bitrate_97} bps')
+        print(f'Average bitrate for reuse factor {reuse_factor}: {average_bitrate} Mbps')
+        print(f'Bitrate attained by 97% of users for reuse factor {reuse_factor}: {bitrate_97} Mbps')
 
         # Plot
         cumulative_prob = np.linspace(0, 1, len(sorted_throughput))
@@ -562,7 +567,7 @@ def main():
     
     #plot_hexagons(layers)
     
-   # act1(num_samples)
+    act1(num_samples)
     
    # eta_for_3_8 = act2(num_samples)  
 
