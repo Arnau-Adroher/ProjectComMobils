@@ -269,7 +269,7 @@ def calculate_throughput(effective_bandwidth, SIR_list, snr_gap_dB):
     th_list = []
     for SIR in SIR_list:
         total_interference = db_to_lineal(SIR - snr_gap_dB)
-        throughput = effective_bandwidth* np.log2(1+(total_interference))
+        throughput = effective_bandwidth* np.log2(1+(total_interference))/1e6
         th_list.append(throughput)
     return th_list
 
@@ -442,10 +442,7 @@ def ex4(num_samples):
     v = 3.8
     sigma_dB = 8
     b = 100e6  # Bandwidth in Hz
-    SNR_gap_dB = 4
-
-    reuse_factors = [1, 3, 9]
-    
+    SNR_gap_dB = 4  
     
     _,_,_,_, sorted_SIR, sorted_SIR_3, sorted_SIR_9, _, _, _ = simulator(v, sigma_dB, 0,num_samples)
     
@@ -466,12 +463,12 @@ def ex4(num_samples):
     bitrate_97_9 = np.percentile(throughput9, 97)
 
 
-    print(f'Average bitrate for reuse factor 1: {round(average_bitrate_1/1e6,2)} Mbps')
-    print(f'Bitrate attained by 97% of users for reuse factor 1: {round(bitrate_97_1/1e6,2)} Mbps')
-    print(f'Average bitrate for reuse factor 3: {round(average_bitrate_3/1e6,2)} Mbps')
-    print(f'Bitrate attained by 97% of users for reuse factor 3: {round(bitrate_97_3/1e6,2)} Mbps')
-    print(f'Average bitrate for reuse factor 9: {round(average_bitrate_9/1e6,2)} Mbps')
-    print(f'Bitrate attained by 97% of users for reuse factor 9: {round(bitrate_97_9/1e6,2)} Mbps')
+    print(f'Average bitrate for reuse factor 1: {round(average_bitrate_1,2)} Mbps')
+    print(f'Bitrate attained by 97% of users for reuse factor 1: {round(bitrate_97_1,2)} Mbps')
+    print(f'Average bitrate for reuse factor 3: {round(average_bitrate_3,2)} Mbps')
+    print(f'Bitrate attained by 97% of users for reuse factor 3: {round(bitrate_97_3,2)} Mbps')
+    print(f'Average bitrate for reuse factor 9: {round(average_bitrate_9,2)} Mbps')
+    print(f'Bitrate attained by 97% of users for reuse factor 9: {round(bitrate_97_9,2)} Mbps')
 
     cumulative_prob = np.linspace(0, 1, len(throughput1))
     cumulative_prob_3 = np.linspace(0, 1, len(throughput3))
@@ -482,10 +479,12 @@ def ex4(num_samples):
     plt.plot(throughput3, cumulative_prob_3, label='CDF reuse factor 3', color='red')
     plt.plot(throughput9, cumulative_prob_9, label='CDF reuse factor 9', color='green')
     plt.title('Cumulative Distribution Function (CDF) of Throughput')
-    plt.xlabel('Throughput (bps)')
+    plt.xlabel('Throughput (Mbps)')
     plt.ylabel('Cumulative Probability')
     plt.grid(True)
     plt.legend()
+    plt.xlim(-1, 1000)
+
 
 
 def act1(num_samples):
