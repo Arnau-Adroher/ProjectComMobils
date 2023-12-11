@@ -187,7 +187,6 @@ def simulator(v, sigma_dB, n,num_samples):
         a_all_3 = 0
         a_all_9 = 0
         for center in centers:
-            ####s'ha de comprobar si angle del punt respecte 0,0 és més petit = 120º
             c_x = center[0]
             c_y = center[1]
             sectors = get_sectors(c_x,c_y)           
@@ -205,7 +204,7 @@ def simulator(v, sigma_dB, n,num_samples):
                         x2= db_to_lineal(generate_shadow_fading(sigma_dB))
     
                         P_k = (calc_distance(random_points[i],center))**(v*n)/(x1**(n))
-                        if (calc_distance(random_points[i],center))>1:
+                        if (calc_distance(random_points[i],center))>1: #Check that code is working properly
                             print("error")
                         val =x2/(calc_distance(random_points[i],ref_cent)**(v))
                         d_all += val
@@ -485,7 +484,7 @@ def act1(num_samples):
     ex1(num_samples)
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print('Time for ex 1: ',elapsed_time)
+    print('Time for ex 1: ',round(elapsed_time,2), 'seconds')
 
 def act2(num_samples):
     print('-------------EX2-------------')
@@ -493,7 +492,7 @@ def act2(num_samples):
     eta_for_3_8 = ex2(num_samples)
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print('Time for ex 2: ',elapsed_time)
+    print('Time for ex 2: ',round(elapsed_time,2), 'seconds')
 
     return eta_for_3_8
 
@@ -503,7 +502,7 @@ def act3(num_samples, eta_for_3_8):
     ex3(num_samples, eta_for_3_8)
     end_time = time.time()    
     elapsed_time = end_time - start_time
-    print('Time for ex 3: ',elapsed_time)
+    print('Time for ex 3: ',round(elapsed_time,2), 'seconds')
 
 def act4(num_samples):
     print('-------------EX4-------------')
@@ -511,7 +510,7 @@ def act4(num_samples):
     ex4(num_samples)
     end_time = time.time()    
     elapsed_time = end_time - start_time
-    print('Time for ex 4: ',elapsed_time)
+    print('Time for ex 4: ',round(elapsed_time,2), 'seconds')
 
 def main():
     ###Values###
