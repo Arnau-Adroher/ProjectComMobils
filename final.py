@@ -241,7 +241,6 @@ def simulator(v, sigma_dB, n,num_samples):
     sorted_SIR_3_frac = np.sort(list_of_SIR_3_frac)
     sorted_SIR_9_frac = np.sort(list_of_SIR_9_frac)
     
-    # Ex1
    # print('sorted_SIR')
     p1 = calculate_percentage(sorted_SIR)
 
