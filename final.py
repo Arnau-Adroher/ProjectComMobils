@@ -122,8 +122,6 @@ def calculate_hexagon_centers(n_layers, size=1):
     #print(centers)
     return centers
 
-
-
 def plot_hexagons(n_layers):
     plt.figure()
     hexagon_centers = calculate_hexagon_centers(n_layers)
@@ -162,10 +160,7 @@ def calculate_percentage(sorted_SIR, threshold=-5):
             break
     return percentage
 
-    
-
-
-    
+   
 def simulator(v, sigma_dB, n,num_samples):
     centers = calculate_hexagon_centers(2)
     #print(centers)
@@ -202,28 +197,26 @@ def simulator(v, sigma_dB, n,num_samples):
                 P=(calc_distance(random_points[0],ref_cent))**(n*v)/(x**(n))
                 d = x/(calc_distance(random_points[0],ref_cent)**(v))
                 a = d*P
-            
-            for i in range(0,3):
-                angle = calculate_angle(ref_cent,random_points[i])
-                #print(angle)
-                if angle <= 120 and angle >= 0:
-                    x1= db_to_lineal(generate_shadow_fading(sigma_dB))
-                    x2= db_to_lineal(generate_shadow_fading(sigma_dB))
+            else: 
+                for i in range(0,3):
+                    angle = calculate_angle(ref_cent,random_points[i])
+                    if angle <= 120 and angle >= 0:
+                        x1= db_to_lineal(generate_shadow_fading(sigma_dB))
+                        x2= db_to_lineal(generate_shadow_fading(sigma_dB))
+    
+                        P_k = (calc_distance(random_points[i],center))**(v*n)/(x1**(n))
+                        if (calc_distance(random_points[i],center))>1:
+                            print("error")
+                        val =x2/(calc_distance(random_points[i],ref_cent)**(v))
+                        d_all += val
+                        a_all += val*P_k
+                        if i == 0:
+                            d_all_3 += val
+                            a_all_3 += P_k * val
+                            if center_id == 8 or center_id == 10 or center_id == 18:
+                                d_all_9 += val
+                                a_all_9 += P_k * val
 
-                    P_k = (calc_distance(random_points[i],center))**(v*n)/(x1**(n))
-                    if (calc_distance(random_points[i],center))>1:
-                        print("error")
-                    val =x2/(calc_distance(random_points[i],ref_cent)**(v))
-                    d_all += val
-                    a_all += val*P_k
-                    if i == 0:
-                        d_all_3 += val
-                        a_all_3 += P_k * val
-                        if center_id == 8 or center_id == 18:
-                            d_all_9 += val
-                            a_all_9 += P_k * val
-
-                                #print(center)
             center_id += 1
         
         SIR = lineal_to_db(d/d_all)
@@ -524,7 +517,7 @@ def act4(num_samples):
 def main():
     ###Values###
     layers = 2
-    num_samples = 5000
+    num_samples = 50000
     ############
     
     plot_hexagons(layers)
