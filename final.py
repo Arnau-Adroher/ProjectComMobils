@@ -826,7 +826,7 @@ def ex1(num_samples):
     plt.plot(sorted_SIR, cumulative_prob, label='CDF reuse factor 1', color='blue')
     plt.plot(sorted_SIR_3, cumulative_prob_3, label='CDF reuse factor 3', color='red')
     plt.plot(sorted_SIR_9, cumulative_prob_9, label='CDF reuse factor 9', color='green')
-    plt.title('Cumulative Distribution Function (CDF) of Random Data')
+    plt.title('Exercise 1: Cumulative Distribution Function (CDF) of Random Data')
     plt.xlabel('SIR(dB)')
     plt.ylabel('Cumulative Probability')
 
@@ -874,7 +874,7 @@ def ex2(num_samples):
     # Adding labels and title
     plt.xlabel('Eta value')
     plt.ylabel('P(SIR>=-5dB)')
-    plt.title('Scatter Plot of Points')
+    plt.title('Exercise 2: Scatter Plot of Points')
 
     # Adding a legend
     plt.legend()
@@ -890,7 +890,7 @@ def ex2(num_samples):
     plt.plot(max_SIR, cumulative_prob_3, label='CDF reuse factor 3', color='red')
     plt.plot(max_SIR_frac, cumulative_prob_3_frac, label='CDF reuse factor 3 fractional power', color='green')
     
-    plt.title('Cumulative Distribution Function (CDF) of Random Data')
+    plt.title(' Exercise 2: Cumulative Distribution Function (CDF) of Random Data')
     plt.xlabel('SIR(dB)')
     plt.ylabel('Cumulative Probability')
 
@@ -957,7 +957,7 @@ def ex3(num_samples,max_n_v3_8):
     plt.plot(save_val[1][1], cumulative_prob_3_frac_v4_5, label='CDF reuse factor 3 fractional power v=4.5', color='brown')
 
     
-    plt.title('Cumulative Distribution Function (CDF) of Random Data')
+    plt.title('Exercise 3: Cumulative Distribution Function (CDF) of Random Data')
     plt.xlabel('SIR(dB)')
     plt.ylabel('Cumulative Probability')
 
@@ -1006,7 +1006,7 @@ def ex4(num_samples):
     plt.plot(throughput1, cumulative_prob, label='CDF reuse factor 1', color='blue')
     plt.plot(throughput3, cumulative_prob_3, label='CDF reuse factor 3', color='red')
     plt.plot(throughput9, cumulative_prob_9, label='CDF reuse factor 9', color='green')
-    plt.title('Cumulative Distribution Function (CDF) of Throughput')
+    plt.title('Exercise 4: Cumulative Distribution Function (CDF) of Throughput')
     plt.xlabel('Throughput (Mbps)')
     plt.ylabel('Cumulative Probability')
     plt.grid(True)
