@@ -7,6 +7,7 @@ from shapely.geometry import Point, Polygon
 import time
 import threading
 
+
 def calc_distance(punto1, punto2):
     x1, y1 = punto1
     x2, y2 = punto2
